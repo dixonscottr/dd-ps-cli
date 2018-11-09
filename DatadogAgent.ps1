@@ -42,7 +42,12 @@ function ShowFunction {
       [ValidateNotNullOrEmpty()]
       [string]$Input2
     )
-    Write-Output $Input2
+    
+    if ($Input2 -eq "datadog.yaml") {
+        OpenFileExplorer (GetProgramDataPath)
+    }  else {
+        OpenFileExplorer (GetPDAgentPaths $Input2)
+    }
 }
 
 function GetProgramDataPath {
@@ -58,8 +63,12 @@ function OpenFileExplorer {
       [ValidateNotNullOrEmpty()]
       [string]$Path
     )
-    Write-Output "Opening directory in file explorer: $Path"
-    Invoke-Item $Path
+    if (Test-Path $Path) {
+        Write-Output "Opening directory in file explorer: $Path"
+        Invoke-Item $Path
+    } else {
+        Write-Output "This path does not exist: $Path"
+    }
 }
 
 function GetPDAgentPaths {
