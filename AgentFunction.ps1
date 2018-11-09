@@ -1,8 +1,17 @@
 function AgentFunction {
+<#
     param(
       [Parameter(Mandatory)]
       [ValidateNotNullOrEmpty()]
-      [string]$Input2
+      [switch]$Input
     )
-    Write-Output $Input2
+#>
+
+    $installPath = (Get-ItemProperty -Path HKLM:\SOFTWARE\Datadog\Datadog' 'Agent\ -Name InstallPath)."InstallPath"
+    $installPath = $installPath + 'embedded\agent.exe'
+
+
+    &$installPath 
+
+    $PSBoundParameters
 }
