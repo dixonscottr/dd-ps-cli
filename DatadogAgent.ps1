@@ -1,5 +1,6 @@
 Import-module .\ShowFunction.ps1 -Force
 Import-module .\AgentFunction.ps1 -Force
+Import-module .\TestDogstatsd.ps1 -Force
 
 <#
 .SYNOPSIS
@@ -28,6 +29,7 @@ function DatadogAgent {
 
         [Parameter(Mandatory=$FALSE)]
         [string]$Input4
+
     )
 
     $argList = @()
@@ -44,5 +46,6 @@ function DatadogAgent {
     switch ( $Input1 ) {
         "agent" { AgentFunction $argList }
         "show" { ShowFunction $Input2 }
+        "testd" { TestDogstatsd }
     }
 }
