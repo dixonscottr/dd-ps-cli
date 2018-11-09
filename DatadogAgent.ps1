@@ -21,11 +21,28 @@ function DatadogAgent {
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [string]$Input2
+        [string]$Input2,
 
+        [Parameter(Mandatory=$FALSE)]
+        [string]$Input3,
+
+        [Parameter(Mandatory=$FALSE)]
+        [string]$Input4
     )
+
+    $argList = @()
+    if($Input2) {
+        $argList += $Input2
+    }
+    if($Input3) {
+        $argList += $Input3
+    }
+    if($Input4) {
+        $argList += $Input4
+    }
+
     switch ( $Input1 ) {
-        "agent" { AgentFunction $Input2 }
+        "agent" { AgentFunction $argList }
         "show" { ShowFunction $Input2 }
     }
 }
