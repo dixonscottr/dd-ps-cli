@@ -1,6 +1,7 @@
 Import-module .\ShowFunction.ps1 -Force
 Import-module .\AgentFunction.ps1 -Force
 Import-module .\TestDogstatsd.ps1 -Force
+Import-module .\TestTraceAPI.ps1 -Force
 
 <#
 .SYNOPSIS
@@ -22,15 +23,20 @@ function DatadogAgent {
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [string]$Input2
+        [string]$Input2,
 
         [Parameter(Mandatory=$false)]
         [string]$Input3
-
     )
     switch ( $Input1 ) {
         "agent" { AgentFunction $Input2 }
         "show" { ShowFunction $Input2 }
-        "testd" { TestDogstatsd }
-    }
+        "test" { switch ($Input2) {
+                "DogStatsD" { TestDogstatsd }
+                "TraceAPI" { TestTraceAPI }
+                default { Write-Output "Not a valid option" }
+                    }
+                }
+        default { Write-Output "Not a valid option" }
+        }
 }
