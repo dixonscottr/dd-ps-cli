@@ -1,3 +1,4 @@
+
 Import-module .\ShowFunction.ps1 -Force
 Import-module .\AgentFunction.ps1 -Force
 Import-module .\TestDogstatsd.ps1 -Force
@@ -25,9 +26,25 @@ function DatadogAgent {
         [ValidateNotNullOrEmpty()]
         [string]$Input2,
 
-        [Parameter(Mandatory=$false)]
-        [string]$Input3
+        [Parameter(Mandatory=$FALSE)]
+        [string]$Input3,
+
+        [Parameter(Mandatory=$FALSE)]
+        [string]$Input4
+
     )
+
+    $argList = @()
+    if($Input2) {
+        $argList += $Input2
+    }
+    if($Input3) {
+        $argList += $Input3
+    }
+    if($Input4) {
+        $argList += $Input4
+    }
+
     switch ( $Input1 ) {
         "agent" { AgentFunction $Input2 }
         "show" { ShowFunction $Input2 }
