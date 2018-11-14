@@ -46,7 +46,7 @@ function DatadogAgent {
     }
 
     switch ( $Input1 ) {
-        "agent" { AgentFunction $Input2 }
+        "agent" { AgentFunction $argList }
         "show" { ShowFunction $Input2 }
         "test" { switch ($Input2) {
                 "DogStatsD" { TestDogstatsd }
