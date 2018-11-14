@@ -15,12 +15,13 @@ function TestTraceAPI {
     $TRACE_ID = (Get-Random -Minimum 0 -Maximum 1000000)
     $SPAN_ID = (Get-Random -Minimum 0 -Maximum 1000000)
 
-    $START = ([int][double]::Parse((Get-Date -UFormat %s)) * 1000000000)
+    $START = ([int64][double]::Parse((Get-Date -UFormat %s)) * 1000000000)
     Start-Sleep -s (Get-Random -Minimum 1 -Maximum 3)
-    $DURATION = ([int][double]::Parse((Get-Date -UFormat %s)) * 1000000000) - $START
+    $DURATION = ([int64][double]::Parse((Get-Date -UFormat %s)) * 1000000000) - $START
 
-    $Headers = @{"Content-Type": "application/json"}
+    $Headers = @{"Content-Type" = "application/json"}
 
+    # traces object data structure
     # $data = [[{
     #             "trace_id": $TRACE_ID,
     #             "span_id": $SPAN_ID,
@@ -32,41 +33,34 @@ function TestTraceAPI {
     #             "duration": $DURATION
     #     }]]
 
-     # $data = @(@(@{
-     #             "trace_id" = $TRACE_ID
-     #             "span_id" = $SPAN_ID
-     #             "name" = "span_name"
-     #             "resource" = "/home"
-     #             "service" = "service_name"
-     #             "type" = "web"
-     #             "start" = $START
-     #             "duration" = $DURATION
-     #     }))
+    [System.Collections.ArrayList]$traces = @()
+    [System.Collections.ArrayList]$trace = @()
 
-    # $bodyJSON = ($data | ConvertTo-Json)
+    $span = @{
+        "trace_id" = $TRACE_ID
+        "span_id" = $SPAN_ID
+        "name" = "span_name"
+        "resource" = "/home"
+        "service" = "service_name"
+        "type" = "web"
+        "start" = $START
+        "duration" = $DURATION
+    }
+    $trace.Add($span) > $null
+    $traces.Add($trace) > $null
+    $traces.Add($trace) > $null
 
-    $data = @{
-                 "trace_id" = $TRACE_ID
-                 "span_id" = $SPAN_ID
-                 "name" = "span_name"
-                 "resource" = "/home"
-                 "service" = "service_name"
-                 "type" = "web"
-                 "start" = $START
-                 "duration" = $DURATION
-         }
-
-    $spans = @(($data | ConvertTo-Json))
-    $traces = @($spans)
-
-    Write-Output $traces
-    Write-Output $uri
+    Write-Output "Sending test trace to $uri"
 
     try {
-        $response = Invoke-WebRequest -Method 'Post' -Uri $uri -ContentType 'application/json' -Body $traces -Headers $Headers
+        $response = Invoke-WebRequest -Method 'Post' -Uri $uri -ContentType 'application/json' -Body ($traces | ConvertTo-Json) -Headers $Headers
+        if ($response.StatusCode -eq 200) {
+            Write-Output "Trace succesfully sent"
+        } else {
+            Write-Output "Received status code: $response.StatusCode"
+        }
     }
     catch {
         Write-Error $_
     }
-
 }
